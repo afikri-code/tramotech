@@ -1,0 +1,10 @@
+create table demo_batch_update(id int, text nvarchar(max));
+insert into demo_batch_update values (1,replicate('some information', 5))
+declare @c int
+select @c = count(*) from demo_batch_update
+insert into demo_batch_update select @c +id, text from demo_batch_update
+create index demo_batch_update_idx on demo_batch_update(id)
+
+
+
+select count(*) from demo_batch_update
