@@ -38,6 +38,7 @@ RUN yum install -y sysstat
 RUN yum install -y unixODBC
 RUN yum install -y vim
 RUN yum install -y which openssh-clients openssh-server
+RUN yum install -y gcc-c++
 
 RUN groupadd -g 1000 oinstall
 RUN groupadd -g 1010 dba
