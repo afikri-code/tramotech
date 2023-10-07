@@ -1,6 +1,7 @@
-package de.tramotech;
+package de.tramotech.impl;
 
 
+import de.tramotech.api.RestClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -10,17 +11,18 @@ import java.util.Base64;
 
 import org.springframework.http.*;
 
-public class RestClient {
+public class RestClientUsingRestTemplate implements RestClient {
     private final String baseUrl;
     private final RestTemplate restTemplate;
     private final HttpHeaders headers;
 
-    public RestClient(String baseUrl) {
+    public RestClientUsingRestTemplate(String baseUrl) {
         this.baseUrl = baseUrl;
         this.restTemplate = new RestTemplate();
         this.headers = new HttpHeaders();
     }
 
+    @Override
     public void addCredentials(String username, String password) {
         String credentials = username + ":" + password;
         byte[] base64Credentials = Base64.getEncoder().encode(credentials.getBytes());
@@ -62,7 +64,7 @@ public class RestClient {
             throw new Exception("POST request failed with status code: " + response.getStatusCodeValue());
         }
     }
-
+    @Override
     public String executeRequest(String endpoint, HttpMethod method, String requestBody) throws Exception {
         String url = baseUrl + "/" + endpoint;
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
@@ -83,7 +85,7 @@ public class RestClient {
 
     public static void main(String[] args) {
         try {
-            RestClient client = new RestClient("http://localhost:8080");
+            RestClientUsingRestTemplate client = new RestClientUsingRestTemplate("http://localhost:8080");
 
             // Add credentials if needed
             client.addCredentials("admin", "admin");
