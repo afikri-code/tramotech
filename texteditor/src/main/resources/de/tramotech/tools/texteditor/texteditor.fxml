@@ -88,7 +88,7 @@
             <Font size="18.0" />
           </font>
         </Label>
-        <TextArea fx:id="content" AnchorPane.topAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.bottomAnchor="10.0" />
+        <TextArea fx:id="content" AnchorPane.topAnchor="10.0"  AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.bottomAnchor="10.0" />
       </children>
     </AnchorPane>
   </children>

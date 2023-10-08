@@ -1,6 +1,8 @@
 package de.tramotech.tools.texteditor;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -8,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -25,12 +28,37 @@ public class HelloApplication extends Application {
 
         // Create a TextArea
         TextArea textArea = (TextArea) fxmlLoader.getNamespace().get("content");
-
+// Add a change listener to the text property of the TextArea
+        textArea.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                stage.setTitle(stage.getTitle()+"*");
+                // Perform any actions you need with the new text
+            }
+        });
 
         // Get a reference to the "Open..." MenuItem
         MenuItem openMenuItem = (MenuItem) fxmlLoader.getNamespace().get("openMenuItem");
         // Get a reference to the "Open..." MenuItem
         MenuItem saveMenuItem = (MenuItem) fxmlLoader.getNamespace().get("saveMenuItem");
+
+        scene.setOnKeyPressed(event -> {
+            if (event.isShortcutDown() && event.getCode() == KeyCode.S) {
+                // The Command (Ctrl) key and "S" key were pressed simultaneously
+                if(selectedFile == null){
+                    // Create a FileChooser
+                    FileChooser fileChooser = new FileChooser();
+
+                    // Set the title of the FileChooser dialog
+                    fileChooser.setTitle("Save File");
+                    selectedFile = fileChooser.showSaveDialog(stage);
+                    stage.setTitle(selectedFile.getName());
+                }
+
+                saveStringToFile(textArea.getText(), selectedFile);
+                stage.setTitle(selectedFile.getName());
+            }
+        });
 
         // Add an event handler to the "Open..." MenuItem
         openMenuItem.setOnAction(new EventHandler<ActionEvent>() {
@@ -73,9 +101,11 @@ public class HelloApplication extends Application {
                     // Set the title of the FileChooser dialog
                     fileChooser.setTitle("Save File");
                     selectedFile = fileChooser.showSaveDialog(stage);
+                    stage.setTitle(selectedFile.getName());
                 }
+
+                saveStringToFile(textArea.getText(), selectedFile);
                 stage.setTitle(selectedFile.getName());
-               saveStringToFile(textArea.getText(), selectedFile);
             }
         });
 
@@ -93,6 +123,7 @@ public class HelloApplication extends Application {
             // Write the text to the file
             fileWriter.write(text);
             fileWriter.close();
+
         } catch (IOException e) {
             e.printStackTrace();
             // Handle the exception here, e.g., show an error dialog
