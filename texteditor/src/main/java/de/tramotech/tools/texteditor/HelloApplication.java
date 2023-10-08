@@ -6,7 +6,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
@@ -17,6 +16,7 @@ import java.io.*;
 public class HelloApplication extends Application {
 
     File selectedFile;
+    String title = "untitled";
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("texteditor.fxml"));
@@ -51,7 +51,7 @@ public class HelloApplication extends Application {
                     // For example, you can display the file path or perform further operations
                     String filePath = selectedFile.getAbsolutePath();
                     textArea.setText(readFileToString(filePath));
-                    System.out.println("Selected File: " + filePath);
+                    stage.setTitle(selectedFile.getName());
 
                     // Add your code to open and process the selected file here
                 } else {
@@ -71,21 +71,22 @@ public class HelloApplication extends Application {
                     FileChooser fileChooser = new FileChooser();
 
                     // Set the title of the FileChooser dialog
-                    fileChooser.setTitle("Open File");
+                    fileChooser.setTitle("Save File");
                     selectedFile = fileChooser.showSaveDialog(stage);
                 }
+                stage.setTitle(selectedFile.getName());
                saveStringToFile(textArea.getText(), selectedFile);
             }
         });
 
 
-        stage.setTitle("Hello!");
+        stage.setTitle(title);
         stage.setScene(scene);
         stage.show();
     }
 
 
-  static void saveStringToFile(String text, File file) {
+   static void saveStringToFile(String text, File file) {
         try {
             FileWriter fileWriter = new FileWriter(file);
 

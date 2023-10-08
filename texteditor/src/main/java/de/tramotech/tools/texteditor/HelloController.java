@@ -10,9 +10,6 @@ public class HelloController {
 
     @FXML
     private TextArea content;
-    public TextArea getContent() {
-        return this.content;
-    }
 
     @FXML
     protected void onHelloButtonClick() {
