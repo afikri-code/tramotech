@@ -20,6 +20,14 @@ public class HelloApplication extends Application {
 
     File selectedFile;
     String title = "untitled";
+    void setTitle(Stage stage) {
+
+        if(selectedFile == null) {
+         stage.setTitle("untitled*");
+         return;
+        }
+        stage.setTitle(selectedFile.getName() + "*");
+    }
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("texteditor.fxml"));
@@ -32,7 +40,7 @@ public class HelloApplication extends Application {
         textArea.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                stage.setTitle(stage.getTitle()+"*");
+                setTitle(stage);
                 // Perform any actions you need with the new text
             }
         });
@@ -57,6 +65,32 @@ public class HelloApplication extends Application {
 
                 saveStringToFile(textArea.getText(), selectedFile);
                 stage.setTitle(selectedFile.getName());
+                return;
+            }
+            if (event.isShortcutDown() && event.getCode() == KeyCode.O) {
+
+                // Create a FileChooser
+                FileChooser fileChooser = new FileChooser();
+
+                // Set the title of the FileChooser dialog
+                fileChooser.setTitle("Open File");
+
+                // Show a FileChooser dialog to open a file
+                selectedFile = fileChooser.showOpenDialog(stage);
+
+                // Check if a file was selected
+                if (selectedFile != null) {
+                    // Implement your logic for opening the selected file here
+                    // For example, you can display the file path or perform further operations
+                    String filePath = selectedFile.getAbsolutePath();
+                    textArea.setText(readFileToString(filePath));
+                    stage.setTitle(selectedFile.getName());
+
+                    // Add your code to open and process the selected file here
+                } else {
+                    // The user canceled the file selection
+                    System.out.println("File selection canceled.");
+                }
             }
         });
 
