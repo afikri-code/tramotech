@@ -1,5 +1,6 @@
 package de.tramotech.tools.texteditor;
 
+import de.tramotech.utils.FileUtils;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -14,7 +15,9 @@ import javafx.scene.input.KeyCode;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class HelloApplication extends Application {
 
@@ -52,45 +55,12 @@ public class HelloApplication extends Application {
 
         scene.setOnKeyPressed(event -> {
             if (event.isShortcutDown() && event.getCode() == KeyCode.S) {
-                // The Command (Ctrl) key and "S" key were pressed simultaneously
-                if(selectedFile == null){
-                    // Create a FileChooser
-                    FileChooser fileChooser = new FileChooser();
-
-                    // Set the title of the FileChooser dialog
-                    fileChooser.setTitle("Save File");
-                    selectedFile = fileChooser.showSaveDialog(stage);
-                    stage.setTitle(selectedFile.getName());
-                }
-
-                saveStringToFile(textArea.getText(), selectedFile);
-                stage.setTitle(selectedFile.getName());
+                saveFile(stage, textArea);
                 return;
             }
             if (event.isShortcutDown() && event.getCode() == KeyCode.O) {
 
-                // Create a FileChooser
-                FileChooser fileChooser = new FileChooser();
-
-                // Set the title of the FileChooser dialog
-                fileChooser.setTitle("Open File");
-
-                // Show a FileChooser dialog to open a file
-                selectedFile = fileChooser.showOpenDialog(stage);
-
-                // Check if a file was selected
-                if (selectedFile != null) {
-                    // Implement your logic for opening the selected file here
-                    // For example, you can display the file path or perform further operations
-                    String filePath = selectedFile.getAbsolutePath();
-                    textArea.setText(readFileToString(filePath));
-                    stage.setTitle(selectedFile.getName());
-
-                    // Add your code to open and process the selected file here
-                } else {
-                    // The user canceled the file selection
-                    System.out.println("File selection canceled.");
-                }
+                openFile(stage, textArea);
             }
         });
 
@@ -98,28 +68,7 @@ public class HelloApplication extends Application {
         openMenuItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                // Create a FileChooser
-                FileChooser fileChooser = new FileChooser();
-
-                // Set the title of the FileChooser dialog
-                fileChooser.setTitle("Open File");
-
-                // Show a FileChooser dialog to open a file
-                selectedFile = fileChooser.showOpenDialog(stage);
-
-                // Check if a file was selected
-                if (selectedFile != null) {
-                    // Implement your logic for opening the selected file here
-                    // For example, you can display the file path or perform further operations
-                    String filePath = selectedFile.getAbsolutePath();
-                    textArea.setText(readFileToString(filePath));
-                    stage.setTitle(selectedFile.getName());
-
-                    // Add your code to open and process the selected file here
-                } else {
-                    // The user canceled the file selection
-                    System.out.println("File selection canceled.");
-                }
+                openFile(stage, textArea);
             }
         });
 
@@ -128,18 +77,7 @@ public class HelloApplication extends Application {
 
             @Override
             public void handle(ActionEvent event) {
-                if(selectedFile == null){
-                    // Create a FileChooser
-                    FileChooser fileChooser = new FileChooser();
-
-                    // Set the title of the FileChooser dialog
-                    fileChooser.setTitle("Save File");
-                    selectedFile = fileChooser.showSaveDialog(stage);
-                    stage.setTitle(selectedFile.getName());
-                }
-
-                saveStringToFile(textArea.getText(), selectedFile);
-                stage.setTitle(selectedFile.getName());
+                saveFile(stage, textArea);
             }
         });
 
@@ -164,20 +102,49 @@ public class HelloApplication extends Application {
         }
     }
 
-    static String readFileToString(String filePath) {
-        StringBuilder content = new StringBuilder();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                content.append(line).append("\n");
-            }
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    void saveFile(Stage stage, TextArea textArea) {
+        // The Command (Ctrl) key and "S" key were pressed simultaneously
+        if(selectedFile == null){
+            // Create a FileChooser
+            FileChooser fileChooser = new FileChooser();
+
+            // Set the title of the FileChooser dialog
+            fileChooser.setTitle("Save File");
+            selectedFile = fileChooser.showSaveDialog(stage);
+            stage.setTitle(selectedFile.getName());
         }
-        return content.toString();
+
+        saveStringToFile(textArea.getText(), selectedFile);
+        stage.setTitle(selectedFile.getName());
     }
+
+    void openFile(Stage stage, TextArea textArea) {
+        // Create a FileChooser
+        FileChooser fileChooser = new FileChooser();
+
+        // Set the title of the FileChooser dialog
+        fileChooser.setTitle("Open File");
+
+        // Show a FileChooser dialog to open a file
+        selectedFile = fileChooser.showOpenDialog(stage);
+
+        // Check if a file was selected
+        if (selectedFile != null) {
+            // Implement your logic for opening the selected file here
+            // For example, you can display the file path or perform further operations
+            String filePath = selectedFile.getAbsolutePath();
+            textArea.setText(FileUtils.readFileToString(filePath));
+            stage.setTitle(selectedFile.getName());
+
+            // Add your code to open and process the selected file here
+        } else {
+            // The user canceled the file selection
+            System.out.println("File selection canceled.");
+        }
+
+    }
+
+
 
 
 
