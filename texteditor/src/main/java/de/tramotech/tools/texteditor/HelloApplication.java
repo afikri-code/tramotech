@@ -16,8 +16,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+
+import static de.tramotech.utils.FileUtils.saveStringToFile;
 
 public class HelloApplication extends Application {
 
@@ -80,26 +81,9 @@ public class HelloApplication extends Application {
                 saveFile(stage, textArea);
             }
         });
-
-
         stage.setTitle(title);
         stage.setScene(scene);
         stage.show();
-    }
-
-
-   static void saveStringToFile(String text, File file) {
-        try {
-            FileWriter fileWriter = new FileWriter(file);
-
-            // Write the text to the file
-            fileWriter.write(text);
-            fileWriter.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Handle the exception here, e.g., show an error dialog
-        }
     }
 
     void saveFile(Stage stage, TextArea textArea) {
@@ -143,15 +127,6 @@ public class HelloApplication extends Application {
         }
 
     }
-
-
-
-
-
-
-
-
-
     public static void main(String[] args) {
         launch();
     }
