@@ -12,13 +12,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
 
-import static de.tramotech.utils.FileUtils.saveStringToFile;
 
 public class HelloApplication extends Application {
 
@@ -36,7 +36,7 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("texteditor.fxml"));
         Parent root = fxmlLoader.load();
-        Scene scene = new Scene(root, 620, 440);
+        Scene scene = new Scene(root, 920, 440);
 
         // Create a TextArea
         TextArea textArea = (TextArea) fxmlLoader.getNamespace().get("content");
@@ -81,10 +81,49 @@ public class HelloApplication extends Application {
                 saveFile(stage, textArea);
             }
         });
+
+        textArea.addEventFilter(KeyEvent.KEY_RELEASED, event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                // Get the current text content
+                String text = textArea.getText();
+                int caretPosition = textArea.getCaretPosition();
+
+                // Find the position of the last newline character
+                int lastNewline = text.lastIndexOf('\n', caretPosition - 1);
+
+                if (lastNewline >= 0) {
+                    // Find the position of the newline character before the last newline character
+                    int lineStart = text.lastIndexOf('\n', lastNewline - 1);
+
+                    if (lineStart >= 0) {
+                        String previousLine = text.substring(lineStart + 1, lastNewline);
+
+                        // Count the leading spaces or tabs in the previous line
+                        int indentLength = 0;
+                        for (char c : previousLine.toCharArray()) {
+                            if (c == ' ' || c == '\t') {
+                                indentLength++;
+                            } else {
+                                break;
+                            }
+                        }
+
+                        // Add the same indentation to the new line
+                        textArea.insertText(caretPosition, " ".repeat(indentLength));
+                        textArea.positionCaret(caretPosition + indentLength);
+                    }
+                }
+            }
+        });
+
+
+
         stage.setTitle(title);
         stage.setScene(scene);
         stage.show();
     }
+
+
 
     void saveFile(Stage stage, TextArea textArea) {
         // The Command (Ctrl) key and "S" key were pressed simultaneously
@@ -98,7 +137,7 @@ public class HelloApplication extends Application {
             stage.setTitle(selectedFile.getName());
         }
 
-        saveStringToFile(textArea.getText(), selectedFile);
+        FileUtils.saveStringToFile(textArea.getText(), selectedFile);
         stage.setTitle(selectedFile.getName());
     }
 
