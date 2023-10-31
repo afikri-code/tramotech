@@ -4,3 +4,4 @@
 **/node_modules*
 **/.mvn*
 **/mvnw*
+**/gradle/wrapper*
