@@ -1,0 +1,39 @@
+image: docker:stable
+
+stages:
+  - build
+  - deploy
+
+variables:
+  TAG_LATEST: tramotech/$CI_COMMIT_REF_NAME:latest
+  TAG_COMMIT: tramotech/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
+
+build:
+  image: maven:3.5.2-jdk-8
+  stage: build
+
+  artifacts:
+    paths:
+      - target/*.jar
+
+  script:
+    - echo "Starting to build"
+    - echo "xxx"
+    - mvn -version
+    - mvn package
+
+
+deploy:
+  image: docker
+  services:
+    - docker:dind
+  stage: deploy
+  script:
+    - echo "Starting to deploy"
+    - cp target/*.jar src/main/docker
+    - docker build -t $TAG_COMMIT -t $TAG_LATEST .
+    - docker run  -p 9080:9080 --rm $TAG_LATEST
+  environment:
+    name: production
+  only:
+    - main
